@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국가유산기본법령 모의고사</title>
+    <!-- 구글 폰트 추가 -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 부트스트랩 CSS 추가 -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 부트스트랩 JS 및 제이쿼리 추가 -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        * {
+            font-family: "Gowun Dodum", sans-serif;
+            color: black;
+        }
+
+        /* 페이지 전체 중앙 정렬 및 80% 너비 설정 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+            /* 상단 간격 추가 */
+        }
+
+        /* 전체 컨테이너 */
+        .container {
+            width: 80%;
+            box-sizing: border-box;
+
+            /* 외곽 경계선 */
+            padding: 20px;
+            position: relative;
+            /* 문제지 박스를 기준으로 배치 */
+        }
+
+        /* 페이지 하단의 이전/다음 버튼 */
+        .footer {
+            position: absolute;
+            bottom: -60px;
+            /* 문제지 박스 외곽 경계선 아래에 위치 */
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+            /* 버튼과 좌우 화면 끝 사이 간격 */
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            width: auto;
+            /* 버튼의 너비가 경계선을 넘지 않게 자동으로 조정 */
+        }
+
+        /* 헤드 영역 */
+        .header {
+            width: 100%;
+            height: 80px;
+            border: 2px solid black;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: rgba(220, 220, 220, 0.5);
+            /* 약한 회색 배경 */
+
+        }
+
+        .left-header {
+            padding-left: 30px;
+            /* 좌측 텍스트를 안으로 넣음 */
+        }
+
+        .right-header {
+            padding-right: 30px;
+            /* 우측 텍스트를 안으로 넣음 */
+        }
+
+
+        /* 문제 영역 */
+        .problem-area {
+            width: 100%;
+            border: 1px solid black;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        /* 좌우 문제 칸 */
+        .left-column,
+        .right-column {
+            width: 48%;
+            box-sizing: border-box;
+        }
+
+        /* 중앙 구분선 - 문제 영역에만 한정 */
+        .problem-area::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background-color: black;
+        }
+
+        /* 문제 영역에 임시 배경 컬러 추가 */
+        .question {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: transparent;
+            /* 문제 내부는 흰색으로 강조 */
+
+            box-sizing: border-box;
+        }
+
+        /* 질문 텍스트 줄바꿈 설정 */
+        .question p {
+            margin: 10;
+            text-indent: -1em;
+            /* 질문 번호 바로 아래에서 시작되지 않도록 */
+            padding-left: 1em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+        }
+
+        /* 선택지 텍스트 줄바꿈 설정 */
+        .choices .choice {
+            text-indent: -1.5em;
+            /* 선택지 번호 바로 아래에서 줄이 시작되지 않도록 */
+            padding-left: 1.5em;
+            /* 첫 줄 이후 줄 시작을 동일하게 맞춤 */
+            margin-bottom: 5px;
+        }
+
+        /* 선택지 버튼 활성화 */
+        .choice-button {
+            width: 30px;
+            /* 선택지 버튼의 넓이 */
+            height: 30px;
+            /* 선택지 버튼의 높이 */
+            line-height: 30px;
+            /* 텍스트를 중앙에 배치 */
+            text-align: center;
+            /* 텍스트 중앙 정렬 */
+            border-radius: 50%;
+            /* 둥근 버튼 */
+            padding: 0;
+            /* 추가 여백 없음 */
+            margin-right: 5px;
+            /* 선택지 텍스트와의 간격 */
+            cursor: pointer;
+            box-sizing: border-box;
+            /* 테두리와 내부 여백을 포함한 크기 정의 */
+        }
+
+        /* 버튼에 마우스를 올렸을 때 투명한 원형 실선 유지 */
+        .choice-button:hover {
+            border-color: transparent;
+            /* 여전히 투명 */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 13cm;
+            /* 가로 13cm */
+            height: 7cm;
+            /* 세로 7cm */
+            border-radius: 10px;
+            /* 각 모서리 레디우스 10px */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            /* 상단 약한 명암 처리 */
+
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            /* 좌우 정렬 */
+            align-items: center;
+            /* 내용 수직 중앙 정렬 */
+            font-size: 20px;
+            /* 상단 폰트 크기 */
+            font-weight: bold;
+            padding-bottom: 10px;
+            border-bottom: 1px solid lightgray;
+            /* 상단 구분선 */
+            height: 40px;
+            /* 상단의 높이 고정 */
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            /* 확인 버튼 우측 정렬 */
+            border-top: none;
+            /* 보이지 않게 투명 처리 */
+        }
+
+        .modal-body {
+            padding: 6px;
+            font-size: 16px;
+            /* 텍스트 폰트 크기 */
+            line-height: 1.5;
+            /* 줄 간격 설정 */
+        }
+
+
+        button.confirm-button {
+            width: 50px;
+            /* 버튼의 너비 */
+            height: 30px;
+            /* 버튼의 높이 */
+            padding: 3px 3px;
+            /* 내부 여백 조정 */
+            margin: 0;
+            /* 외부 여백 제거 */
+            line-height: normal;
+            /* 텍스트가 중앙에 위치하도록 */
+            border-radius: 10px;
+            /* 모서리 둥글게 */
+            background-color: rgb(161, 160, 160);
+            /* 버튼 배경색 (녹색) */
+            color: white;
+            /* 버튼 글씨색 */
+            font-size: 16px;
+            /* 폰트 크기 */
+            border: none;
+            /* 테두리 제거 */
+            cursor: pointer;
+            /* 커서 모양 변경 */
+        }
+
+        button.confirm-button:hover {
+            background-color: #45a049;
+            /* 마우스 오버 시 버튼 색상 */
+        }
+
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 이전페이지 버튼 */
+        button.previous-button {
+            float: left;
+            /* 우측 정렬 */
+            padding: 5px 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-left: 0;
+            /* 좌측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+
+        /* 다음페이지 버튼 */
+        button.next-button {
+            float: right;
+            /* 우측 정렬 */
+            padding: 5px 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-right: 0;
+            /* 우측 여백 없음 */
+            margin-bottom: 30px;
+            /* 아래 간격 설정 */
+        }
+    </style>
+    <script>
+        function openAnswerModal(isCorrect, modalId) {
+            // 정답 여부 설정
+            const answerText = document.getElementById(modalId).querySelector('#answerText');
+            answerText.textContent = isCorrect ? '정답입니다!' : '오답입니다.';
+
+            // 모달창 열기
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        function goToPreviousPage() {
+            window.location.href = 'previous-page.html'; // 이전 페이지의 URL
+        }
+
+        function goToNextPage() {
+            window.location.href = 'next-page.html'; // 다음 페이지의 URL
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <!-- 전체 컨테이너 -->
+    <div class="container">
+        <!-- 헤드 영역 -->
+        <div class="header">
+            <div class="left-header">
+                <h1 style="font-size: 28px; font-weight: 600;">국가유산기본법령 모의고사 </h1> <!-- 수동 입력 -->
+            </div>
+            <div class="right-header">
+                <h3 style="font-size: 22px;">2024년 제1회</h3> <!-- 수동 입력 -->
+            </div>
+        </div>
+
+        <!-- 문제 영역 -->
+        <div class="problem-area">
+            <!-- 좌측 문제 칸 -->
+            <div class="left-column">
+                <!-- 1번 문제 영역 -->
+                <div class="question">
+                    <p>11. 국가유산기본법령상  국가유산 활용ㆍ진흥에 관한 설명으로 옳지 않은 것은?</p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal11')">①</span> 국가와 지방자치단체는 국민의 문화적 삶을 보장하기 위하여 국가유산 관람ㆍ전시ㆍ교육ㆍ체험 등의 다양한 향유 프로그램을 제공하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal11')">②</span> 국가와 지방자치단체는 지능정보기술이나 그 밖의 다른 기술들의 적용ㆍ융합을 통하여 국가유산데이터를 생산ㆍ수집 및 관리하여야 한다.                            
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal11')">③</span> 국가와 지방자치단체는 국민이 국가유산의 가치를 이해ㆍ습득하고 국가유산 애호의식을 함양할 수 있도록 적절한 교육 기회를 제공하여야 한다.                           
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal11')">④</span> 국가와 지방자치단체는 국가유산에 대한 이해를 증진하고 가치를 확산하기 위하여 다양한 방법으로 국가유산을 국내외에 널리 홍보하여야 한다.                           
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal11" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal11')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 국가유산기본법 제24조 제1항<br>① 국가와 지방자치단체는 지능정보기술이나 그 밖의 다른 기술들의 적용ㆍ융합을 통하여 국가유산데이터를 생산ㆍ수집 및 관리할 수 있다.</p> <!-- 법조문 표시 -->
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 2번 문제 영역 -->
+                <div class="question">
+                    <p>12. 국가유산기본법령상 국민의 국가유산복지 증진에 관한 설명으로 옳지 않은 것은? </p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal12')">①</span> 국가와 지방자치단체는 국민의 문화적 삶을 보장하기 위하여 국가유산 관람ㆍ전시ㆍ교육ㆍ체험 등의 다양한 향유 프로그램을 제공하여야 한다.                            
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal12' )">②</span> 국가와 지방자치단체는 모든 국민이 국가유산을 향유할 수 있도록 필요한 환경을 조성하여야 한다.                            
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal12')">③</span> 국가와 지방자치단체는 신체적ㆍ경제적ㆍ지리적 제약 등으로 국가유산 향유가 제한되는 취약계층을 위하여 필요한 지원과 시책을 강구하여야 한다.                           
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal12')">④</span> 국가와 지방자치단체는 국가유산에 대한 이해를 증진하고 가치를 확산하기 위하여 다양한 방법으로 국가유산을 국내외에 널리 홍보하여야 한다.                            
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal12" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal12')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 국가유산기본법 제23조(국민의 국가유산복지 증진) <br> 제26조(국가유산 홍보)국가와 지방자치단체는 국가유산에 대한 이해를 증진하고 가치를 확산하기 위하여 다양한 방법으로 국가유산을 국내외에 널리 홍보하여야 한다.</p> <!-- 법조문 표시 -->                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 3번 문제 영역 -->
+                <div class="question">
+                    <p>13. 국가유산기본법령상 외국문화유산의 보호에 관한 설명으로 옳지 않은 것은?</p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal13')">①</span> 대한민국이 가입한 유산 보호에 관한 국제조약에 가입된 외국의 법령에 따라 지정ㆍ보호되는 유산을 보호 대상으로 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal13')">②</span> 국가유산청장은 외국유산의 국내 반입이 불법 반출에 해당한다고 인정할 만한 상당한
+                            이유가 있더라도 해당 반출국이 조약상의 정당한 절차에 따라 반환을 요청할 때까지는
+                            그 외국유산을 유치할 수 없다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal13')">③</span> 국가유산청장은 외국유산을 유치하면 그것을 박물관 등에 보관ㆍ관리하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal13')">④</span> 불법 반출된 것임이 확인된 외국유산이라 하더라도 해당 반출국이 그 유산을 회수
+                            하려는 의사가 없는 것이 분명한 경우에는 지체없이 이를 그 소유자나 점유자에게
+                            반환하여야 한다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal13" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal13')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 국가유산기본법 제30조 제2항<br> ② 국가유산청장과 관계 중앙행정기관의 장은 국내로 반입하려 하거나 이미 반입된 외국유산이 해당 반출국으로부터 불법반출된 것으로 인정할 만한 상당한 이유가 있으면 그 외국유산을 유치할 수 있다. 
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+            </div>  
+            <!-- 우측 문제 칸 -->
+            <div class="right-column">
+                <!-- 6번 문제 영역 -->
+                <div class="question">
+                    <p>14. 국가유산기본법령상  남북한 간 국가유산 교류 협력에 관한 설명으로 옳지 않은 것은?</p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal14')">①</span> 국가는 남북한 간 국가유산분야의 상호교류 및 협력을 증진할 수 있도록 노력하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal14')">②</span> 국가는 남북한 간 국가유산분야의 상호교류 및 협력증진을 위하여 북한의 국가유산 관련 정책ㆍ제도 및 현황 등에 관하여 조사ㆍ연구하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal14')">③</span> 국가는 대통령령으로 정하는 바에 따라 교류 협력사업과 조사ㆍ연구 등을 위하여 필요한 경우 관련 단체 등에 협력을 요청할 수 있다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal14')">④</span> 국가는 남북한 간 국가유산분야의 상호교류 및 협력을 증진하기 위하여 예산의 범위에서 필요한 경비를 지원하여야 한다.
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal14" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal14')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 국가유산기본법 시행령 제2조<br> 국가유산청장은 남북한 간 국가유산분야의 상호교류 및 협력을 증진하기 위하여 예산의 범위에서 필요한 경비를 지원할 수 있다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <!-- 7번 문제 영역 -->
+                <div class="question">
+                    <p>15. 국가유산기본법령상 남북한 간 문화유산분야 교류 협력사업의 지원대상에 해당하지 않는 것은?</p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal15')">①</span> 국가유산에 대한 공동 조사ㆍ연구ㆍ수리
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal15')">②</span> 국가유산 보존ㆍ관리에 관한 정보ㆍ기술의 교류
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal15')">③</span> 국가유산분야 관계 전문가의 인적 교류
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal15')">④</span> 남북한 간 교류 협력사업의 홍보
+
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal15" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal15')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 국가유산기본법 시행령 제2조 제1항 <br> ① 국가유산청장은 「국가유산기본법」(이하 “법”이라 한다) 제29조제1항에 따라 남북한 간 국가유산분야의 상호교류 및 협력을 증진하기 위하여 예산의 범위에서 다음 각 호의 사업에 필요한 경비를 지원할 수 있다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="question">
+                    <p>16. 국가유산기본법령상  세계유산 등의 보호에 관한 설명으로 옳지 않은 것은?</p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal16')">①</span> 국가와 지방자치단체는 세계유산 등으로 등재된 국가유산을 국외에 널리 알리기 위하여 적극 노력하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal16')">②</span> 국가와 지방자치단체는 세계유산 등에 등재된 날부터 국가지정유산에 준하여 보호하여야 한다. 
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal16')">③</span> 국가유산청장은 세계유산 등의 보존을 위하여 필요한 경우에는 세계유산 등의 현황 및 상태에 관한 정기적인 조사ㆍ점검을 실시하여야 한다.
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal16')">④</span> 국가유산청장은 세계유산 등의 소재지를 관할하는 지방자치단체의 장에게 조사ㆍ점검에 필요한 자료 및 의견의 제출을 요청할 수 있다. 
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal16" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal16')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 국가유산기본법 시행령 제3조 제1항<br> ① 국가유산청장은 법 제31조제2항에 따른 세계유산등(이하 이 조에서 “세계유산등”이라 한다)의 보존을 위하여 필요한 경우에는 세계유산등의 현황 및 상태에 관한 정기적인 조사ㆍ점검을 실시할 수 있다.
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="question">
+                    <p>17. 국가유산기본법령상 국가유산진흥원의 수행 사업이 아닌 것은?</p>
+                    <div class="choices">
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal17')">①</span> 공연ㆍ전시 등 무형유산 활동 지원 및 진흥
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(true, 'answerModal17')">②</span> 남북한 간 국가유산 분야의 상호교류 및 협력 증진
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal17')">③</span> 국가유산 보호운동의 지원
+                        </div>
+                        <div class="choice">
+                            <span class="choice-button" onclick="openAnswerModal(false, 'answerModal17')">④</span> 전통문화행사의 복원 및 재현 
+                        </div>
+                    </div>
+                </div>
+                <!-- 문제 영역이 끝나는 부분 아래에 배치 -->
+                <div id="answerModal17" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span id="answerText">정답입니다!</span> <!-- 좌측 정답 여부 표시 -->
+                            <button class="confirm-button" onclick="closeModal('answerModal17')">확인</button>
+                            <!-- 우측 끝 확인 버튼 -->
+                        </div>
+                        <!-- 하단 텍스트 영역을 아래에 배치 -->
+                        <div class="modal-body">
+                            <p id="lawText">법조문 ; 국가유산기본법 제32조 제3항, 시행령 제2조 제1항 제6호<br> ③ 진흥원은 설립목적을 달성하기 위하여 다음 각 호의 사업을 수행한다. 
+                            </p> <!-- 법조문 표시 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 시험지 외곽 경계선 바깥의 버튼 영역 -->
+        <div class="navigation">
+            <button class="previous-button" onclick="goToPreviousPage()">이전페이지</button>
+            <button class="next-button" onclick="goToNextPage()">다음페이지</button>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
